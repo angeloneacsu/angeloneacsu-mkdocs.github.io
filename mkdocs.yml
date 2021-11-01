@@ -1,0 +1,6 @@
+site_name: Documentatii Diverse
+site_url: https://angeloneacsu.github.io/
+nav:
+    - Home: index.md
+    - About: about.md
+theme: readthedocs
