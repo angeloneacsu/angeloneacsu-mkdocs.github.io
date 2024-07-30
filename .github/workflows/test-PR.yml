@@ -13,6 +13,7 @@ env:
   GIT_COMMIT_EMAIL: angelo.neacsu-bot@gmail.com
   GIT_COMMIT_NAME: Angelo Neacsu Bot
   BASE_BRANCH: master
+  GH_TOKEN: ${{ secrets.PAT_FOR_PR_CREATION }}
 jobs:
   test_job:
     runs-on: ubuntu-latest
