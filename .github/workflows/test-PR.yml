@@ -26,8 +26,26 @@ jobs:
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v3
-        
+
+      - name: Check if any PR exists from branches starting with 'upgrade-'
+        id: check_pr
+        run: |
+          EXISTS=$(gh pr list --state open --json headRefName --jq '.[] | select(.headRefName | startswith("upgrade-java")) | .headRefName')
+          if [ -z "$EXISTS" ]; then
+            echo "pr_exists=false" >> $GITHUB_ENV
+            echo "=== No PR exists yet ==="
+          else
+            echo "pr_exists=true" >> $GITHUB_ENV
+            echo "EXISTING_BRANCH=$EXISTS" >> $GITHUB_ENV
+            echo "!!! There is already a PR from $EXISTS to ${{ env.BASE_BRANCH }} !!! Skipping updating Dockerfile and PR..."
+            
+            PR_NUMBER=$(gh pr list --state open --head $EXISTING_BRANCH --json number --jq '.[].number')
+            echo "Adding comments to the existing PR $PR_NUMBER... "
+            gh pr comment $PR_NUMBER --body "This PR is obsolete and should be closed. Existing '$EXISTING_BRANCH' branch is old."
+          fi
+
       - name: Update Dockerfile and Create PR
+        if: step.check_pr.outputs.pr_exists == 'false'
         id: update-dockerfile
         run: |
           # Configure git
