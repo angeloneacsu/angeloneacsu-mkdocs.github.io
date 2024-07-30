@@ -26,36 +26,34 @@ jobs:
       - name: Checkout 🛎
         uses: actions/checkout@v3
         
-      - name: Update Dockerfile
+      - name: Update Dockerfile and Create PR
         id: update-dockerfile
         run: |
           # Configure git
-          git config --local user.email "${{ env.GIT_COMMIT_EMAIL }}"
-          git config --local user.name "${{ env.GIT_COMMIT_NAME }}"
-
+          git config --local user.email "angelo.neacsu-bot@gmail.com"
+          git config --local user.name "Angelo Neacsu Bot"
+          
           # Create and checkout new branch
           NEW_BRANCH="upgrade-java-$(date +'%Y%m%d%H%M%S')"
           git checkout -b $NEW_BRANCH
-
+          
           # Create dummy file
           echo "test" > dummy
           
           # Add dummy file
           git add dummy
-
+          
           # Commit changes
-          git commit -m "Added dummy"  # Remove leading comma and space
-
+          git commit -m "Added dummy"
+          
           # Push the new branch
           git push origin $NEW_BRANCH
-
+          
+          # Output the new branch name
           echo "NEW_BRANCH=$NEW_BRANCH" >> $GITHUB_OUTPUT
-          
-      - name: Create PR
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_FOR_PR_CREATION }}
-          NEW_BRANCH: ${{ steps.update-dockerfile.outputs.NEW_BRANCH }}
-        run: |-
+
+          # Pull the latest changes (though not necessary in this context)
           git pull
-          gh pr create -B "${{ env.NEW_BRANCH }}" -H "${{ env.BASE_BRANCH }}" --title "Merge ${{ env.NEW_BRANCH }} into ${{ env.BASE_BRANCH }}" --body 'Created by Github action'
           
+          # Create a pull request
+          gh pr create -B "master" -H "$NEW_BRANCH" --title "Merge $NEW_BRANCH into master" --body 'Created by Github action'
