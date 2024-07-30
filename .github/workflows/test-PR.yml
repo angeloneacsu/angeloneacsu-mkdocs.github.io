@@ -9,6 +9,7 @@ env:
   GIT_COMMIT_NAME: Angelo Neacsu Bot
 jobs:
   test_job:
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
