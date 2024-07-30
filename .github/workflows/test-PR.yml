@@ -30,6 +30,7 @@ jobs:
       - name: Check if any PR exists from branches starting with 'upgrade-'
         id: check_pr
         run: |
+          gh pr list --state open --json headRefName --jq '.[] | select(.headRefName | startswith("upgrade-java")) | .headRefName'
           EXISTS=$(gh pr list --state open --json headRefName --jq '.[] | select(.headRefName | startswith("upgrade-java")) | .headRefName')
           if [ -z "$EXISTS" ]; then
             echo "pr_exists=false" >> $GITHUB_ENV
