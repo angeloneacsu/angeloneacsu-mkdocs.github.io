@@ -44,7 +44,9 @@ jobs:
             
             
             echo "Adding comments to the existing PR $PR_NUMBER... "
-            gh pr comment $PR_NUMBER --body "This PR is obsolete and should be closed. Existing '$EXISTS' branch is old."
+            gh pr comment $PR_NUMBER --body "This PR is obsolete and I'm going to close it. Existing '$EXISTS' branch is old."
+            echo "Closing PR $PR_NUMBER..."
+            gh pr close $PR_NUMBER # --delete-branch
           fi
 
       - name: Update Dockerfile and Create PR
