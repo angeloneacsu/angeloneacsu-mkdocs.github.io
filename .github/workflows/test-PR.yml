@@ -15,14 +15,14 @@ jobs:
       contents: write
       id-token: write
       pull-requests: write
-    environment:
-      name: main
+    # environment:
+    #   name: main
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v3
       - name: Create PR for Dockerfile update
         env:
-          TOKEN: ${{ secrets.TEST_TOKEN }}
+          TOKEN: ${{ secrets.PAT_FOR_PR_CREATION }}
         run: |
           # Configure git
           git config --local user.email "${{ env.GIT_COMMIT_EMAIL }}"
