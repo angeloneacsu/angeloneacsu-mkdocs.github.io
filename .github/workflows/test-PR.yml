@@ -52,5 +52,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_FOR_PR_CREATION }}
         run: |-
-          gh pr create -B base_branch -H branch_to_merge --title "Merge $NEW_BRANCH into master" --body 'Created by Github action'
+          # pull request create failed: GraphQL: Head sha can't be blank, Base sha can't be blank, No commits between base_branch and branch_to_merge, Head ref must be a branch, Base ref must be a branch (createPullRequest)
+          gh pr create -B $NEW_BRANCH -H $BASE_BRANCH --title "Merge $NEW_BRANCH into $BASE_BRANCH" --body 'Created by Github action'
           
