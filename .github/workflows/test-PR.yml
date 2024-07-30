@@ -37,9 +37,11 @@ jobs:
           else
             echo "pr_exists=true" >> $GITHUB_ENV
             echo "EXISTING_BRANCH=$EXISTS" >> $GITHUB_ENV
-            echo "!!! There is already a PR from $EXISTS to ${{ env.BASE_BRANCH }} !!! Skipping updating Dockerfile and PR..."
             
             PR_NUMBER=$(gh pr list --state open --head $EXISTS --json number --jq '.[].number')
+            echo "!!! There is already a PR ($PR_NUMBER) from $EXISTS to $BASE_BRANCH !!! Skipping updating Dockerfile and skip creating PR..."
+            
+            
             echo "Adding comments to the existing PR $PR_NUMBER... "
             gh pr comment $PR_NUMBER --body "This PR is obsolete and should be closed. Existing '$EXISTS' branch is old."
           fi
