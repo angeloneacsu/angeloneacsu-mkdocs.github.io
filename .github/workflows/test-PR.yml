@@ -25,9 +25,8 @@ jobs:
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v3
-      - name: Create PR for Dockerfile update
-        env:
-          TOKEN: ${{ secrets.PAT_FOR_PR_CREATION }}
+        
+      - name: Update Dockerfile
         run: |
           # Configure git
           git config --local user.email "${{ env.GIT_COMMIT_EMAIL }}"
@@ -43,45 +42,15 @@ jobs:
           # Add dummy file
           git add dummy
 
-          # Prepare commit message and PR body
-          COMMIT_MSG="Update Java version(s) in Dockerfile"
-          PR_BODY="This PR updates the following Java version(s) in the Dockerfile:\n\n"
-
-          if [ "${{ steps.update8-dockerfile.outputs.CHANGES_MADE }}" == "true" ]; then
-            PR_BODY+="- JDK 8: ${{ steps.get-latest8-release.outputs.LATEST_VERSION }}\n"
-            COMMIT_MSG+=", JDK 8"
-          fi
-
-          PR_BODY+="\nThe Docker image has been built and pushed successfully with these updates."
-          PR_BODY+="\nDocker image tag: ${{ steps.build-push.outputs.DOCKER_TAG }}"
-          PR_BODY_ESCAPED=$(echo "$PR_BODY" | jq -Rs .)
-
           # Commit changes
-          git commit -m "${COMMIT_MSG#, }"  # Remove leading comma and space
+          git commit -m "Added dummy"  # Remove leading comma and space
 
           # Push the new branch
           git push origin $NEW_BRANCH
-
-          # Wait a little, for github to set my new branch
           
-          #err=1
-          #while [[ ${err} -eq 1 ]];do git ls-remote --heads origin ${NEW_BRANCH} | grep -w -q ${NEW_BRANCH}; if [[ "$?" -eq 0 ]];then err=0; else; echo "Sleeping... 2sec"; sleep 2; fi; done
-          echo "Sleeping 20sec..."; sleep 20
-
-          # Create Pull Request
-          # PR_TITLE="${COMMIT_MSG#, }"  # Use commit message as PR title, removing leading comma and space
-          echo "curl -L \
-            -X POST \
-            -H \"Accept: application/vnd.github+json\" \
-            -H \"Authorization: Bearer ${{ env.TOKEN }}\" \
-            -H \"X-GitHub-Api-Version: 2022-11-28\" \
-            https://api.github.com/repos/angeloneacsu/angeloneacsu-mkdocs.github.io/pulls \
-            -d '{\"title\":\"Update Java version\",\"body\":\"The Docker image has been built and already pushed successfully!\",\"head\":\"$NEW_BRANCH\",\"base\":\"master\"}'"
-
-          curl -L \
-            -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ env.TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/angeloneacsu/angeloneacsu-mkdocs.github.io/pulls \
-            -d '{"title":"Update Java version","body":"The Docker image has been built and already pushed successfully!","head":"$NEW_BRANCH","base":"master"}' | jq .
+      - name: Create PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_FOR_PR_CREATION }}
+        run: |-
+          gh pr create -B base_branch -H branch_to_merge --title "Merge $NEW_BRANCH into master" --body 'Created by Github action'
+          
