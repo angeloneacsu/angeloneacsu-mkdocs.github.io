@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: '30 6 * * *'  # Run daily at 7.30AM UTC
   workflow_dispatch:  # Allow manual triggering
+  push:
+    paths:
+      - .github/workflows/test-PR.yml
+    branches:
+      - master
 
 env:
   GIT_COMMIT_EMAIL: angelo.neacsu-bot@gmail.com
