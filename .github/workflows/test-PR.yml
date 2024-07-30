@@ -82,4 +82,4 @@ jobs:
             -H "Authorization: Bearer ${{ env.TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/${{ github.repository }}/pulls \
-            -d '{"title":"Update Java version","body":"The Docker image has been built and already pushed successfully!","head":"java-update","base":"master"}' | jq .
+            -d '{"title":"Update Java version","body":"The Docker image has been built and already pushed successfully!","head":"${{ github.repository_owner }}:$NEW_BRANCH","base":"master"}' | jq .
