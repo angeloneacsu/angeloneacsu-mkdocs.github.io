@@ -39,18 +39,22 @@ jobs:
             echo "pr_exists=true" >> $GITHUB_ENV
             echo "EXISTING_BRANCH=$EXISTS" >> $GITHUB_ENV
             
-            PR_NUMBER=$(gh pr list --state open --head $EXISTS --json number --jq '.[].number')
-            echo "!!! There is already a PR ($PR_NUMBER) from $EXISTS to $BASE_BRANCH !!! Skipping updating Dockerfile and skip creating PR..."
+            PR_NUMBERS=$(gh pr list --state open --head $EXISTS --json number --jq '.[].number')
+            echo "!!! These PRs are open for upgrade:"
+            for PR in $PR_NUMBERS;do
+              echo " -> PR ($PR) from $EXISTS to $BASE_BRANCH ..."
+            done
             
-            
-            echo "Adding comments to the existing PR $PR_NUMBER... "
-            gh pr comment $PR_NUMBER --body "This PR is obsolete and I'm going to close it. Existing '$EXISTS' branch is old."
-            echo "Closing PR $PR_NUMBER..."
-            gh pr close $PR_NUMBER # --delete-branch
+            for PR in $PR_NUMBERS;do
+              echo "Adding comments to the existing PR ${PR}... "
+              gh pr comment $PR --body "This PR is obsolete and I'm going to close it. We're creating a new PR.\nExisting '$EXISTS' branch is old and will also be deleted."
+              echo "Closing PR ${PR}..."
+              gh pr close $PR --delete-branch
+            done
           fi
 
       - name: Update Dockerfile and Create PR
-        if: steps.check_pr.outputs.pr_exists == 'false'
+        #if: steps.check_pr.outputs.pr_exists == 'false'
         id: update-dockerfile
         run: |
           # Configure git
