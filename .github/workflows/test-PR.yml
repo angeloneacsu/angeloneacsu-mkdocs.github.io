@@ -59,8 +59,9 @@ jobs:
 
           # Wait a little, for github to set my new branch
           
-          err=1
-          while [[ ${err} -eq 1 ]];do git ls-remote --heads origin ${NEW_BRANCH} | grep -w -q ${NEW_BRANCH}; if [[ "$?" -eq 0 ]];then err=0; else; echo "Sleeping... 2sec"; sleep 2; fi; done
+          #err=1
+          #while [[ ${err} -eq 1 ]];do git ls-remote --heads origin ${NEW_BRANCH} | grep -w -q ${NEW_BRANCH}; if [[ "$?" -eq 0 ]];then err=0; else; echo "Sleeping... 2sec"; sleep 2; fi; done
+          echo "Sleeping 20sec..."; sleep 20
 
           # Create Pull Request
           # PR_TITLE="${COMMIT_MSG#, }"  # Use commit message as PR title, removing leading comma and space
